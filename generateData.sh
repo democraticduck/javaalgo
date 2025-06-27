@@ -1,5 +1,5 @@
 #!/bin/bash
 javac Main.java -d dest -Xlint:unchecked
 cd dest
-java Main
+java Main -Xmx7g -Xms7g
 cd ..

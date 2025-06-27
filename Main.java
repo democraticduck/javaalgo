@@ -27,7 +27,7 @@ interface SearchingAlgorithm {
 
 abstract class IntArraySortingAlgorithm implements SortingAlgorithm {
     protected List<Integer> array;
-    protected IntArrayBasedAlgorithm(List<Integer> arr) {
+    protected IntArraySortingAlgorithm(List<Integer> arr) {
         this.array = arr;
     }
     public abstract List<Integer> execute();
@@ -35,7 +35,7 @@ abstract class IntArraySortingAlgorithm implements SortingAlgorithm {
 
 abstract class IntArraySearchingAlgorithm implements SearchingAlgorithm {
     protected List<Integer> array;
-    protected IntArrayBasedAlgorithm(List<Integer> arr) {
+    protected IntArraySearchingAlgorithm(List<Integer> arr) {
         this.array = arr;
     }
     public abstract boolean search(int i);
@@ -173,18 +173,27 @@ public class Main {
             
         IntStream it = r.ints(20000000, 0, 200000000);
         
-        
-        IntArrayBasedAlgorithm algo = new QuickSort(new ArrayList<Integer>(it.boxed().toList()));
+        List<Integer> arr = CSVManager.readCSV("dataset_sample_1000.csv");
+        IntArraySortingAlgorithm mergeSortAlgo = new MergeSort(arr);
+        IntArraySortingAlgorithm quickSortAlgo = new QuickSort(arr);
         //IntArrayBasedAlgorithm algo = new MergeSort(it.boxed().toList());
 
-        long curTime = getTime();
-        List<Integer> newa = algo.execute();
-        long lastTime = getTime();
+        //mergeSort doesnt do inplace sorting, whereas quicksort does, so put quicksort after mergesort
+        long curTime1 = getTime();
+        mergeSortAlgo.execute();
+        long lastTime1 = getTime();
+        
+        long curTime2 = getTime();
+        quickSortAlgo.execute();
+        long lastTime2 = getTime();
 
-        long timeElapsed = lastTime - curTime;
-        System.out.println("Elapsed time: ");
-        System.out.println(timeElapsed / 1000);
-        System.out.println("Is valid or not: " + sortvalidator(newa));
+        long timeElapsed1 = lastTime1 - curTime1;
+        long timeElapsed2 = lastTime2 - curTime2;
+        System.out.println("Elapsed time for mergeSort: ");
+        System.out.println(timeElapsed1 / 1000);
+        System.out.println("Elapsed time for quickSort: ");
+        System.out.println(timeElapsed2 / 1000);
+        //System.out.println("Is valid or not: " + sortvalidator(newa));
        
     }
 }
