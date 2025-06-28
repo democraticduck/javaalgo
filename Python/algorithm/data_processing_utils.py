@@ -32,26 +32,51 @@ def save_merge_steps(start, end, result, data):
     with open(filename, 'w') as file:
         for step in result:
             file.write("[")
+            count = 0
+            total = len(step)
             for x in step:
-                x = str(x) + "/" + data[x]
-                file.write(x + ", ")
-            file.write("]" + "\n")
+                number = x
+                string = data[number]
+                file.write(str(number) + "/" + string)
+                count += 1
+                if count != total:
+                    file.write(", ")
+            file.write("]\n")
 
 
 def save_quick_steps(start, end, result, data):
     filename = f"quick_sort_step_{start}_{end}.txt"
     with open(filename, 'w') as file:
         # First line: the original list
-        initial_list = result[0][1] if isinstance(result[0], tuple) else result[0]
-        formatted_initial = ', '.join(f"{num}/{data[num]}" for num in initial_list)
-        file.write(formatted_initial + '\n')
+        if isinstance(result[0], tuple):
+            initial_list = result[0][1]
+        else:
+            initial_list = result[0]
+
+        file.write("[")
+        count = 0
+        total = len(initial_list)
+        for x in initial_list:
+            file.write(str(x) + "/" + data[x])
+            count += 1
+            if count != total:
+                file.write(", ")
+        file.write("]\n")
 
         # Subsequent lines: each step with pi=index
         for step in result:
             if isinstance(step, tuple):
-                pi, current_list = step
-                formatted_step = ', '.join(f"{num}/{data[num]}" for num in current_list)
-                file.write(f"pi={pi} {formatted_step}\n")
+                pi = step[0]
+                current_list = step[1]
+                file.write("pi=" + str(pi) + " [")
+                count = 0
+                total = len(current_list)
+                for x in current_list:
+                    file.write(str(x) + "/" + data[x])
+                    count += 1
+                    if count != total:
+                        file.write(", ")
+                file.write("]\n")
 
 
 def save_sorted_data(result, data, size, type):
