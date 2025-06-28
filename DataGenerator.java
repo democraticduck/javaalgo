@@ -22,6 +22,7 @@ public class DataGenerator {
 
     public static Stream<String> getStream(int count, int lb, int ub) { //stream instead of list
         UniqueIntGenerator generator = new UniqueIntGenerator(count, lb, ub);
+        
         Stream<String> stream = Stream.generate(() -> generateFullLine(4 + ThreadLocalRandom.current().nextInt(2), generator.getNextUnique())).limit(count);   
         return stream;
     }
@@ -39,19 +40,14 @@ public class DataGenerator {
         System.out.printf("Data written to %s%n", filename);
         System.out.printf("Execution time: %.3f ms%n", durationInMillis);
     }
-    /*
+    
     public static void main(String[] args) {
         long startTime = System.nanoTime(); // Start timing
-        Stream<String> stream = getStream(90000000, 0, 2000000000);
-        
-        stream.forEach(line -> {
-                System.out.println(line);
-            });
-            
+        Stream<String> stream = getStream(85000000, 0, 2000000000);
 
-        //CSVManager.writeInCSV("dataset_sample_1000.csv", stream);
-        List<Integer> data = CSVManager.readCSV("dataset_sample_1000.csv");
-       
+        CSVManager.writeInCSV("dataset_sample_85000000.csv", stream);
+        //List<CustomType> data = CSVManager.readCSVSpecificLine("dataset_sample_1000.csv", 1, 10);
+        //for(CustomType i : data) System.out.printf("Value is %d/%s%n", i.value, i.str);
         long endTime = System.nanoTime(); // End timing
         long durationInNano = endTime - startTime;
         double durationInMillis = durationInNano / 1_000_000.0;
@@ -59,5 +55,5 @@ public class DataGenerator {
         System.out.printf("Data written to %s%n", "dataset_sample_1000.csv");
         System.out.printf("Execution time: %.3f ms%n", durationInMillis);
     }
-    */
+    
 }
