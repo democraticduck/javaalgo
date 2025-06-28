@@ -8,7 +8,7 @@ class Tester:
     @staticmethod
     def run():
         print("=== Python Algorithm Tester ===")
-        filename = input("Enter dataset CSV filename (e.g., path\dataset_sample_1000.csv): ")
+        filename = input("Enter dataset CSV filename (e.g., dataset_sample_1000.csv): ")
 
         if not os.path.isfile(filename):
             print(f"Error: File '{filename}' does not exist.")

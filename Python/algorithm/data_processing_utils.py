@@ -28,7 +28,7 @@ def read_section_data(filename, start_row, end_row):
 
 
 def save_merge_steps(start, end, result, data):
-    filename = f"output/merge_sort_step_{start}_{end}.txt"
+    filename = f"merge_sort_step_{start}_{end}.txt"
     with open(filename, 'w') as file:
         for step in result:
             file.write("[")
@@ -39,7 +39,7 @@ def save_merge_steps(start, end, result, data):
 
 
 def save_quick_steps(start, end, result, data):
-    filename = f"output/quick_sort_step_{start}_{end}.txt"
+    filename = f"quick_sort_step_{start}_{end}.txt"
     with open(filename, 'w') as file:
         # First line: the original list
         initial_list = result[0][1] if isinstance(result[0], tuple) else result[0]
@@ -55,7 +55,7 @@ def save_quick_steps(start, end, result, data):
 
 
 def save_sorted_data(result, data, size, type):
-    filename = f"output/quick_sort_{size}.csv" if type == "q" else f"output/merge_sort__{size}.csv"
+    filename = f"quick_sort_{size}.csv" if type == "q" else f"merge_sort__{size}.csv"
     with open(filename, 'w') as file:
         for x in result:
             x = str(x) + "," + data[x] + "\n"
@@ -71,7 +71,7 @@ def read_sorted_data(filename):
 
 
 def save_search_steps(result, data, target):
-    filename = f"output/binary_search_step_{target}.txt"
+    filename = f"binary_search_step_{target}.txt"
     with open(filename, 'w') as file:
         for x in result:
             if x == -1:
@@ -117,7 +117,7 @@ def binary_search_test(arr):
 
 
 def save_search_result(result, size):
-    filename = f"output/binary_search_{size}.txt"
+    filename = f"binary_search_{size}.txt"
     with open(filename, 'w') as file:
         file.write(f"Best Case Time    : {result[0]:.6f} ms\n")
         file.write(f"Average Case Time : {result[1]:.6f} ms\n")
