@@ -42,18 +42,14 @@ public class DataGenerator {
     }
     
     public static void main(String[] args) {
-        long startTime = System.nanoTime(); // Start timing
-        Stream<String> stream = getStream(85000000, 0, 2000000000);
+        
+        Stream<String> stream = getStream(60000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_60000000.csv", stream);
 
-        CSVManager.writeInCSV("dataset_sample_85000000.csv", stream);
+        
         //List<CustomType> data = CSVManager.readCSVSpecificLine("dataset_sample_1000.csv", 1, 10);
         //for(CustomType i : data) System.out.printf("Value is %d/%s%n", i.value, i.str);
-        long endTime = System.nanoTime(); // End timing
-        long durationInNano = endTime - startTime;
-        double durationInMillis = durationInNano / 1_000_000.0;
-
-        System.out.printf("Data written to %s%n", "dataset_sample_1000.csv");
-        System.out.printf("Execution time: %.3f ms%n", durationInMillis);
+        
     }
     
 }

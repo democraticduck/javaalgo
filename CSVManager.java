@@ -6,9 +6,11 @@ public class CSVManager {
     public static List<CustomType> readCSV(String filePath) {
         List<CustomType> data = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            System.out.println(filePath);
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
+                
                 data.add(new CustomType(Integer.parseInt(values[0]), values[1]));
             }
         } catch (IOException e) {

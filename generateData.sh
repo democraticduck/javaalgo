@@ -1,5 +1,5 @@
 #!/bin/bash
-javac Main.java -d dest -Xlint:unchecked
+javac DataGenerator.java -d dest -Xlint:unchecked
 cd dest
-java Main -Xmx9g -Xms9g
+java DataGenerator -Xmx12g -Xms12g
 cd ..

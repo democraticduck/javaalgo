@@ -2,6 +2,7 @@ import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 class MyThread extends Thread {
     public static long getTime() {
         return System.currentTimeMillis();
@@ -59,46 +60,50 @@ abstract class CustomTypeArraySearchingAlgorithm implements SearchingAlgorithm {
 
 class MergeSort extends CustomTypeArraySortingAlgorithm {
     private static List<CustomType> mergeSort(List<CustomType> arr, int i, int j) {
-        List<CustomType> finArr = new ArrayList<>();
         
         if(j <= i) {
+            List<CustomType> finArr = Arrays.asList(new CustomType[1]);
             if (j < i) {
-                finArr.add(arr.get(j));
+                finArr.set(0, arr.get(j));
             }
             else 
-                finArr.add(arr.get(i));
+                finArr.set(0, arr.get(i));
             return finArr;
         } 
+
+        List<CustomType> finArr = Arrays.asList(new CustomType[j-i+1]);
 
         int mid = (j+i) / 2;
         List<CustomType> left = mergeSort(arr, i, mid);
         List<CustomType> right = mergeSort(arr, mid + 1, j);
         
-        int lp = 0, rp = 0;
+        int lp = 0, rp = 0, idx = 0;
         while(lp < left.size() && rp < right.size()) {
-            
             if (left.get(lp).value < right.get(rp).value) {
-                finArr.add(left.get(lp));
+                finArr.set(idx, left.get(lp));
                 lp++;
             }
             else {
-                finArr.add(right.get(rp));
+                finArr.set(idx, right.get(rp));
                 rp++;
             }    
+            idx++;
         }
 
         while(lp < left.size()) {
-            finArr.add(left.get(lp));
+            finArr.set(idx, left.get(lp));
             lp++;
+            idx++;
         }
         while(rp < right.size()) {
-            finArr.add(right.get(rp));
+            finArr.set(idx, right.get(rp));
             rp++;
+            idx++;
         }
         return finArr;
     }
     private static List<CustomType> mergeSortStep(List<CustomType> arr, int i, int j, String filename) {
-        List<CustomType> finArr = new ArrayList<>();
+        List<CustomType> finArr = new ArrayList<>(j - i + 1);
         
         if(j <= i) {
             if (j < i) {
@@ -147,7 +152,7 @@ class MergeSort extends CustomTypeArraySortingAlgorithm {
         double lastTime1 = getTime();
         
         System.out.println("Elapsed time for mergeSort: ");
-        System.out.println((lastTime1-curTime1) / 1000);
+        System.out.println(lastTime1-curTime1);
         
         CSVManager.writeCustomTypeArrCSV(filename, arr, true);
         return arr;
@@ -216,7 +221,7 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
         double lastTime1 = getTime();
         
         System.out.println("Elapsed time for quick sort: ");
-        System.out.println((lastTime1-curTime1) / 1000);
+        System.out.println(lastTime1-curTime1);
 
         CSVManager.writeCustomTypeArrCSV(filename, array, true);
         return array;
@@ -308,10 +313,23 @@ public class Main {
 
     public static void main(String[] args) {
         
+        List<CustomType> arr = CSVManager.readCSV("dataset_sample_70000000.csv");
+        CustomTypeArraySortingAlgorithm algo1 = new MergeSort(arr);
+        algo1.execute("merge_sort_70000000.csv");
 
-        List<CustomType> arr = CSVManager.readCSV("dataset_sample_85000000.csv");
-        CustomTypeArraySortingAlgorithm mergeSortAlgo = new MergeSort(arr);
-        mergeSortAlgo.execute("merge_sorted_85000000.csv");
+        CustomTypeArraySortingAlgorithm algo2= new QuickSort(arr);
+        algo2.execute("quick_sort_70000000.csv");
+        
+        /*
+        for(int i = 10000000; i <= 70000000; i+=10000000) {
+            List<CustomType> arr = CSVManager.readCSV(String.format("dataset_sample_%d.csv", i));
+            CustomTypeArraySortingAlgorithm algo1 = new MergeSort(arr);
+            algo1.execute(String.format("merge_sort_%d.csv", i));
+
+            CustomTypeArraySortingAlgorithm algo2 = new QuickSort(arr);
+            algo2.execute(String.format("quick_sort_%d.csv", i));
+        }
+        */
         /*
         List<CustomType> arr = CSVManager.readCSV("merge_sort_sorted.csv");
         CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
