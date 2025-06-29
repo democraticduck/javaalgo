@@ -63,6 +63,12 @@ def binary_search_test(arr):
     bs = BinarySearch()
 
     n = len(arr) - 1
+
+    # run 100 times to allocate memory first, so that later will be consistent
+    for _ in range(100):
+        target = random.choice(arr)
+        bs.binarySearch(arr, 0, n, target)
+
     # Best Case
     mid = (0 + n) // 2
     target = arr[mid]

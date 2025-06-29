@@ -25,8 +25,8 @@ class Tester:
         choice = input("Enter your choice: ")
 
         if choice == "1":
-            start = int(input("Start row: "))
-            end = int(input("End row: "))
+            start = int(input("Start row : "))
+            end = int(input("End row   : "))
             data = read_section_data(filename, start, end)
             intArrayList = list(data)
             mergeSortStep = MergeSortStep()
@@ -37,8 +37,8 @@ class Tester:
             save_merge_steps(start, end, result, data)
 
         elif choice == "2":
-            start = int(input("Start row: "))
-            end = int(input("End row: "))
+            start = int(input("Start row : "))
+            end = int(input("End row   : "))
             data = read_section_data(filename, start, end)
             intArrayList = list(data)
             quickSortStep = QuickSortStep()
