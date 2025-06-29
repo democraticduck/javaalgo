@@ -83,6 +83,27 @@ public class CSVManager {
         }
     }
 
+    public static void writeCustomTypeArrStepPrefixCSV(String filePath, List<CustomType> arr, String prefix, boolean toAppend) { 
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, toAppend))) {
+            bw.write(prefix);
+            bw.write("[");
+            arr.forEach(elem -> {
+            try {
+                bw.write(String.valueOf(elem.value));
+                bw.write("/");
+                bw.write(elem.str);
+                bw.write(", ");
+            } catch (IOException e) {
+                throw new UncheckedIOException(e); 
+            }
+        });
+        bw.write("]");
+        bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void writeCustomTypeArrCSV(String filePath, List<CustomType> arr, boolean toAppend) { 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, toAppend))) {
             arr.forEach(elem -> {

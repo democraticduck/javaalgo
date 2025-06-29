@@ -144,7 +144,7 @@ class MergeSort extends CustomTypeArraySortingAlgorithm {
     }
 
     public void executeStep(String filename) {
-        CSVManager.writeStringInCSV(filename, "", false); //reset file
+        CSVManager.writeCustomTypeArrStepCSV(filename, array, false); //write ori array
         mergeSortStep(array, 0, array.size() - 1, filename);
     }
 
@@ -221,8 +221,17 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
             quickSort(arr, pi+1, r);
         }
     }
+    
+    private static void quickSortStep(List<CustomType> arr, int l, int r, String filename) {
+        if(l < r) {
+            int pi = partition(arr, l, r);
+            CSVManager.writeCustomTypeArrStepPrefixCSV(filename, arr, String.format("pi=%d ", pi), true);
+            quickSortStep(arr, l, pi-1, filename);
+            quickSortStep(arr, pi+1, r, filename);
+        }
+    }
 
-    private static void quickSortStep(List<CustomType> arr, int i, int j, String filename) {
+    private static void quickSortStepOld(List<CustomType> arr, int i, int j, String filename) {
         if(i >= j) return;
 
         int p = arr.get(j).value;
@@ -230,13 +239,11 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
         for(int idx = i; idx < j; idx++) {
             if(arr.get(idx).value <= p) 
                 swap(arr, ++pos, idx);
-                
-            
         }
         swap(arr, ++pos, j);
         CSVManager.writeCustomTypeArrStepCSV(filename, arr, true);
-        quickSortStep(arr, i, pos-1, filename);
-        quickSortStep(arr, ++pos, j, filename);
+        quickSortStepOld(arr, i, pos-1, filename);
+        quickSortStepOld(arr, ++pos, j, filename);
     }
 
     public List<CustomType> executeOld(String filename) {
@@ -266,8 +273,13 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
         return array;
     }
 
+    public void executeStepOld(String filename) {
+        CSVManager.writeCustomTypeArrStepCSV(filename, array, false); //write ori array
+        quickSortStepOld(array, 0, array.size() - 1, filename);
+    }
+
     public void executeStep(String filename) {
-        CSVManager.writeStringInCSV(filename, "", false); //reset file
+        CSVManager.writeCustomTypeArrStepCSV(filename, array, false); //write ori array
         quickSortStep(array, 0, array.size() - 1, filename);
     }
 
@@ -296,6 +308,18 @@ class BinarySearch extends CustomTypeArraySearchingAlgorithm {
         int l = 0, r = arr.size()-1;
         while(l <= r) {
             int k = (l+r)/2;
+            if(arr.get(k).value == target) return true;
+            if(arr.get(k).value > target) r = k-1;
+            else l = k+1; 
+        }
+        return false;
+    }
+
+    private static boolean nonRecStep(List<CustomType> arr, int target, String filename) {
+        int l = 0, r = arr.size()-1;
+        while(l <= r) {
+            int k = (l+r)/2;
+            CSVManager.writeCustomTypeStringCSV(filename, arr.get(k), k, true);
             if(arr.get(k).value == target) return true;
             if(arr.get(k).value > target) r = k-1;
             else l = k+1; 
@@ -369,9 +393,17 @@ class BinarySearch extends CustomTypeArraySearchingAlgorithm {
         //System.out.printf("Highest: %.6f, lowest: %.6f%n", highest, lowest);
         CSVManager.writeStringInCSV(filename, String.format("Best Time: %.6fms%nAverage time: %.6fms%nWorst Time: %.6fms", lowest/1000000.0, sum/sz, highest/1000000.0), true);
     }
-    public boolean searchStep(int i, String filename) {
+    public boolean searchStepOld(int i, String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
         boolean found = recStep(array, 0, array.size() - 1, 0, i, filename);
+        String s = found ? "Found element" : "Element not found";
+        CSVManager.writeStringInCSV(filename, s, true);
+        return found;
+    }
+
+    public boolean searchStep(int i, String filename) {
+        CSVManager.writeStringInCSV(filename, "", false); //reset file
+        boolean found = nonRecStep(array, i, filename);
         String s = found ? "Found element" : "Element not found";
         CSVManager.writeStringInCSV(filename, s, true);
         return found;
@@ -400,6 +432,24 @@ public class Main {
 
     public static void main(String[] args) {
         /*
+        //search step
+        int target = 1235011;
+        List<CustomType> arr = CSVManager.readCSV("merge_sort_5000000.csv");
+        CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
+        binarySearchAlgo.searchStep(target, String.format("binary_search__step_%d.txt", target));
+        */
+        /*
+        //sort steps
+        int start = 0, end = 10;
+        List<CustomType> arr = CSVManager.readCSVSpecificLine("dataset_sample_5000000.csv", start, end);
+        CustomTypeArraySortingAlgorithm algo1 = new MergeSort(new ArrayList<>(arr));
+        algo1.executeStep(String.format("merge_sort_step_%d_%d.txt", start, end));
+
+        CustomTypeArraySortingAlgorithm algo2= new QuickSort(arr);
+        algo2.executeStep(String.format("quick_sort_step_%d_%d.txt", start, end));
+        */
+        /*
+        //individual sort
         List<CustomType> arr = CSVManager.readCSV("dataset_sample_5000000.csv");
         CustomTypeArraySortingAlgorithm algo1 = new MergeSort(arr);
         algo1.execute("merge_sort_5000000.csv");
@@ -408,6 +458,7 @@ public class Main {
         algo2.execute("quick_sort_5000000.csv");
         */
         /*
+        //loop sort
         for(int i = 5000000; i <= 50000000; i+=5000000) {
             List<CustomType> arr = CSVManager.readCSV(String.format("dataset_sample_%d.csv", i));
             CustomTypeArraySortingAlgorithm algo1 = new MergeSort(arr);
@@ -418,15 +469,17 @@ public class Main {
             System.out.println(" ");
         }
         */
+       /*
+       //loop search
         for(int i = 5000000; i <= 50000000; i+=5000000) {
             List<CustomType> arr = CSVManager.readCSV(String.format("merge_sort_%d.csv", i));
             BinarySearch binarySearchAlgo = new BinarySearch(arr);
             binarySearchAlgo.searchNonRec(String.format("binary_search_%d.txt", i));
             System.out.println(" ");
         }
-       /*
         */
         /*
+        //individual search
         List<CustomType> arr = CSVManager.readCSV("merge_sort_35000000.csv");
         CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
         binarySearchAlgo.searchExecute("binary_search_35000000.txt");
