@@ -4,21 +4,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
-class MyThread extends Thread {
-    public static long getTime() {
-        return System.currentTimeMillis();
-    }
-    public void run() {
-        long st = getTime();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(st - getTime());
-    }
-}
-
 
 
 interface SortingAlgorithm {
@@ -38,8 +23,8 @@ abstract class CustomTypeArraySortingAlgorithm implements SortingAlgorithm {
     protected CustomTypeArraySortingAlgorithm(List<CustomType> arr) {
         this.array = arr;
     }
-    public static double getTime() {
-        return System.currentTimeMillis() / 1000;
+    public static long getTime() {
+        return System.nanoTime();
     }
     public abstract List<CustomType> execute(String filename);
     public abstract void executeStep(String filename);
@@ -49,8 +34,8 @@ abstract class CustomTypeArraySearchingAlgorithm implements SearchingAlgorithm {
     protected CustomTypeArraySearchingAlgorithm(List<CustomType> arr) {
         this.array = arr;
     }
-    public static double getTimeMillis() {
-        return System.currentTimeMillis();
+    public static long getTime() {
+        return System.nanoTime();
     }
     public abstract boolean search(int i);
     public abstract boolean searchStep(int i, String filename);
@@ -147,12 +132,12 @@ class MergeSort extends CustomTypeArraySortingAlgorithm {
     }
     public List<CustomType> execute(String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
-        double curTime1 = getTime();
+        long curTime = System.nanoTime();
         List<CustomType> arr = mergeSort(array, 0, array.size() - 1); 
-        double lastTime1 = getTime();
+        long lastTime = System.nanoTime();
         
-        System.out.println("Elapsed time for mergeSort: ");
-        System.out.printf("%.6f", lastTime1-curTime1);
+        System.out.println("Elapsed time for mergeSort (seconds): ");
+        System.out.printf("%.3f%n", (lastTime-curTime)/1000000000.0);
         
         CSVManager.writeCustomTypeArrCSV(filename, arr, true);
         return arr;
@@ -256,12 +241,12 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
 
     public List<CustomType> executeOld(String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
-        double curTime1 = getTime();
-        quickSort(array, 0, array.size() - 1); 
-        double lastTime1 = getTime();
+        long curTime = System.nanoTime();
+        quickSortOld(array, 0, array.size() - 1); 
+        long lastTime = System.nanoTime();
         
-        System.out.println("Elapsed time for quick sort: ");
-        System.out.println(lastTime1-curTime1);
+        System.out.println("Elapsed time for quick sort (seconds): ");
+        System.out.printf("%.3f%n", (lastTime-curTime)/1000000000.0);
 
         CSVManager.writeCustomTypeArrCSV(filename, array, true);
         return array;
@@ -270,12 +255,12 @@ class QuickSort extends CustomTypeArraySortingAlgorithm {
 
     public List<CustomType> execute(String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
-        double curTime1 = getTime();
+        long curTime = System.nanoTime();
         quickSort(array, 0, array.size() - 1); 
-        double lastTime1 = getTime();
+        long lastTime = System.nanoTime();
         
-        System.out.println("Elapsed time for quick sort: ");
-        System.out.printf("%.6f", lastTime1-curTime1);
+        System.out.println("Elapsed time for quick sort (seconds): ");
+        System.out.printf("%.3f%n", (lastTime-curTime)/1000000000.0);
 
         CSVManager.writeCustomTypeArrCSV(filename, array, true);
         return array;
@@ -307,6 +292,17 @@ class BinarySearch extends CustomTypeArraySearchingAlgorithm {
 
     }
 
+    private static boolean nonRec(List<CustomType> arr, int target) {
+        int l = 0, r = arr.size()-1;
+        while(l <= r) {
+            int k = (l+r)/2;
+            if(arr.get(k).value == target) return true;
+            if(arr.get(k).value > target) r = k-1;
+            else l = k+1; 
+        }
+        return false;
+    }
+
     private static boolean recStep(List<CustomType> arr, int i, int j, int cnt, int target, String filename) {
         int mid = (i+j) / 2;
         CSVManager.writeCustomTypeStringCSV(filename, arr.get(mid), cnt, true);
@@ -323,24 +319,56 @@ class BinarySearch extends CustomTypeArraySearchingAlgorithm {
 
     public void searchExecute(String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
-        double lowest = Double.MAX_VALUE, highest = -1;
+        long lowest = Long.MAX_VALUE, highest = -1;
         double sum = 0;
         
         //final int nIter = 30000000;
-        
+        for(int i = 0; i < 1000; i++) { //warm up?
+            search(i);
+        }
         for(int i = 0; i < array.size(); i++) {
             //int val = ThreadLocalRandom.current().nextInt(2000000000);
-            double t1 = getTimeMillis();
+            long t1 = System.nanoTime();
             search(array.get(i).value);
-            double t2 = getTimeMillis();
+            long t2 = System.nanoTime();
             lowest = Math.min(t2-t1, lowest);
             highest = Math.max(t2-t1, highest);
-            sum += (t2-t1);
+            sum += (t2-t1)/1000000.0;
         }
-        
-        CSVManager.writeStringInCSV(filename, String.format("Best Time: %.6fms%nAverage time: %.6fms%nWorst Time: %.6fms", lowest, sum/array.size(), highest), true);
+        long t1 = System.nanoTime();
+        search(array.get(array.size() - 1).value + 10);
+        long t2 = System.nanoTime();
+        highest = Math.max(t2-t1, highest);
+        double sz = array.size();
+        //System.out.printf("Highest: %.6f, lowest: %.6f%n", highest, lowest);
+        CSVManager.writeStringInCSV(filename, String.format("Best Time: %.6fms%nAverage time: %.6fms%nWorst Time: %.6fms", lowest/1000000.0, sum/sz, highest/1000000.0), true);
     }
-
+    public void searchNonRec(String filename) {
+        CSVManager.writeStringInCSV(filename, "", false); //reset file
+        long lowest = Long.MAX_VALUE, highest = -1;
+        double sum = 0;
+        
+        //final int nIter = 30000000;
+        for(int i = 0; i < 1000; i+=5234) { //warm up?
+            nonRec(array, i);
+        }
+        for(int i = 0; i < array.size(); i++) {
+            //int val = ThreadLocalRandom.current().nextInt(2000000000);
+            long t1 = System.nanoTime();
+            nonRec(array, array.get(i).value);
+            long t2 = System.nanoTime();
+            lowest = Math.min(t2-t1, lowest);
+            highest = Math.max(t2-t1, highest);
+            sum += (t2-t1)/1000000.0;
+        }
+        long t1 = System.nanoTime();
+        nonRec(array, array.get(array.size() - 1).value + 10);
+        long t2 = System.nanoTime();
+        highest = Math.max(t2-t1, highest);
+        double sz = array.size();
+        //System.out.printf("Highest: %.6f, lowest: %.6f%n", highest, lowest);
+        CSVManager.writeStringInCSV(filename, String.format("Best Time: %.6fms%nAverage time: %.6fms%nWorst Time: %.6fms", lowest/1000000.0, sum/sz, highest/1000000.0), true);
+    }
     public boolean searchStep(int i, String filename) {
         CSVManager.writeStringInCSV(filename, "", false); //reset file
         boolean found = recStep(array, 0, array.size() - 1, 0, i, filename);
@@ -372,12 +400,12 @@ public class Main {
 
     public static void main(String[] args) {
         /*
-        List<CustomType> arr = CSVManager.readCSV("dataset_sample_50000000.csv");
+        List<CustomType> arr = CSVManager.readCSV("dataset_sample_5000000.csv");
         CustomTypeArraySortingAlgorithm algo1 = new MergeSort(arr);
-        algo1.execute("merge_sort_50000000.csv");
+        algo1.execute("merge_sort_5000000.csv");
 
         CustomTypeArraySortingAlgorithm algo2= new QuickSort(arr);
-        algo2.execute("quick_sort_50000000.csv");
+        algo2.execute("quick_sort_5000000.csv");
         */
         /*
         for(int i = 5000000; i <= 50000000; i+=5000000) {
@@ -390,18 +418,18 @@ public class Main {
             System.out.println(" ");
         }
         */
-       /*
         for(int i = 5000000; i <= 50000000; i+=5000000) {
             List<CustomType> arr = CSVManager.readCSV(String.format("merge_sort_%d.csv", i));
-            CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
-            binarySearchAlgo.searchExecute(String.format("binary_search_%d.txt", i));
+            BinarySearch binarySearchAlgo = new BinarySearch(arr);
+            binarySearchAlgo.searchNonRec(String.format("binary_search_%d.txt", i));
             System.out.println(" ");
         }
+       /*
         */
-        List<CustomType> arr = CSVManager.readCSV("merge_sort_40000000.csv");
-        CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
-        binarySearchAlgo.searchExecute("binary_search_40000000.txt");
         /*
+        List<CustomType> arr = CSVManager.readCSV("merge_sort_35000000.csv");
+        CustomTypeArraySearchingAlgorithm binarySearchAlgo = new BinarySearch(arr);
+        binarySearchAlgo.searchExecute("binary_search_35000000.txt");
         */
         //IntArrayBasedAlgorithm algo = new MergeSort(it.boxed().toList());
         
