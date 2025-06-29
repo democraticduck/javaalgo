@@ -9,6 +9,7 @@ public class CSVManager {
             System.out.println(filePath);
             String line;
             while ((line = br.readLine()) != null) {
+                if(line.isEmpty()) continue;
                 String[] values = line.split(",");
                 
                 data.add(new CustomType(Integer.parseInt(values[0]), values[1]));
@@ -26,7 +27,7 @@ public class CSVManager {
             String line;
             while ((line = br.readLine()) != null && br.getLineNumber() <= end) {
                 
-                if(br.getLineNumber() < start) continue;
+                if(br.getLineNumber() < start || line.isEmpty()) continue;
                 String[] values = line.split(",");
                 
                 data.add(new CustomType(Integer.parseInt(values[0]), values[1]));

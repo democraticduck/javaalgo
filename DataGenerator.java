@@ -43,10 +43,20 @@ public class DataGenerator {
     
     public static void main(String[] args) {
         
-        Stream<String> stream = getStream(60000000, 0, 2000000000);
-        CSVManager.writeInCSV("dataset_sample_60000000.csv", stream);
+        Stream<String> stream = getStream(45000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_45000000.csv", stream);
 
-        
+        stream = getStream(35000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_35000000.csv", stream);
+
+        stream = getStream(25000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_25000000.csv", stream);
+
+        stream = getStream(15000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_15000000.csv", stream);
+
+        stream = getStream(5000000, 0, 2000000000);
+        CSVManager.writeInCSV("dataset_sample_5000000.csv", stream);
         //List<CustomType> data = CSVManager.readCSVSpecificLine("dataset_sample_1000.csv", 1, 10);
         //for(CustomType i : data) System.out.printf("Value is %d/%s%n", i.value, i.str);
         
