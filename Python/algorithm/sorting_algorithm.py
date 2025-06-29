@@ -1,76 +1,121 @@
 # Merge Sort
+# Reference: https://www.geeksforgeeks.org/dsa/merge-sort/
 class MergeSort:
-    def merge(self, S, left, mid, right):
-        L = S[left : mid + 1]
-        R = S[mid + 1 : right + 1]
-        k = left
-        
-        while L and R:
-            if L[0] < R[0]:
-                S[k] = L.pop(0)
+    def merge(self, arr, left, mid, right):
+        n1 = mid - left + 1
+        n2 = right - mid
+
+        # Create temp arrays
+        L = [0] * n1
+        R = [0] * n2
+
+        # Copy data to temp arrays L[] and R[]
+        for i in range(n1):
+            L[i] = arr[left + i]
+        for j in range(n2):
+            R[j] = arr[mid + 1 + j]
+
+        i = 0  # Initial index of first subarray
+        j = 0  # Initial index of second subarray
+        k = left  # Initial index of merged subarray
+
+        # Merge the temp arrays back
+        # into arr[left..right]
+        while i < n1 and j < n2:
+            if L[i] <= R[j]:
+                arr[k] = L[i]
+                i += 1
             else:
-                S[k] = R.pop(0)
+                arr[k] = R[j]
+                j += 1
             k += 1
 
-        while L:
-            S[k] = L.pop(0)
+        # Copy the remaining elements of L[],
+        # if there are any
+        while i < n1:
+            arr[k] = L[i]
+            i += 1
             k += 1
 
-        while R:
-            S[k] = R.pop(0)
+        # Copy the remaining elements of R[], 
+        # if there are any
+        while j < n2:
+            arr[k] = R[j]
+            j += 1
             k += 1
 
-    def mergeSort(self, S, left, right):
+    def mergeSort(self, arr, left, right):
         if left < right:
             mid = (left + right) // 2
-            self.mergeSort(S, left, mid)
-            self.mergeSort(S, mid + 1, right)
-            self.merge(S, left, mid, right)
-        return S
+
+            self.mergeSort(arr, left, mid)
+            self.mergeSort(arr, mid + 1, right)
+            self.merge(arr, left, mid, right)
 
 # Merge Sort Step
+# Reference: https://www.geeksforgeeks.org/dsa/merge-sort/
 class MergeSortStep:
     def __init__(self):
         self.step = []
 
-    def merge(self, S, left, mid, right):
-        L = S[left : mid + 1]
-        R = S[mid + 1 : right + 1]
-        k = left
-        
-        while L and R:
-            if L[0] < R[0]:
-                S[k] = L.pop(0)
+    def merge(self, arr, left, mid, right):
+        n1 = mid - left + 1
+        n2 = right - mid
+
+        # Create temp arrays
+        L = [0] * n1
+        R = [0] * n2
+
+        # Copy data to temp arrays L[] and R[]
+        for i in range(n1):
+            L[i] = arr[left + i]
+        for j in range(n2):
+            R[j] = arr[mid + 1 + j]
+
+        i = 0  # Initial index of first subarray
+        j = 0  # Initial index of second subarray
+        k = left  # Initial index of merged subarray
+
+        # Merge the temp arrays back
+        # into arr[left..right]
+        while i < n1 and j < n2:
+            if L[i] <= R[j]:
+                arr[k] = L[i]
+                i += 1
             else:
-                S[k] = R.pop(0)
+                arr[k] = R[j]
+                j += 1
             k += 1
 
-        while L:
-            S[k] = L.pop(0)
+        # Copy the remaining elements of L[],
+        # if there are any
+        while i < n1:
+            arr[k] = L[i]
+            i += 1
             k += 1
 
-        while R:
-            S[k] = R.pop(0)
+        # Copy the remaining elements of R[], 
+        # if there are any
+        while j < n2:
+            arr[k] = R[j]
+            j += 1
             k += 1
 
-        self.step.append(S[:])
+        self.step.append(arr[:])
 
-    def mergeSort(self, S, left, right):
+    def mergeSort(self, arr, left, right):
         if left < right:
             mid = (left + right) // 2
-            self.mergeSort(S, left, mid)
-            self.mergeSort(S, mid + 1, right)
-            self.merge(S, left, mid, right)
-        return S
 
-    def execute(self, S, left, right):
+            self.mergeSort(arr, left, mid)
+            self.mergeSort(arr, mid + 1, right)
+            self.merge(arr, left, mid, right)
+
+    def execute(self, arr, left, right):
         self.step = []
-        self.step.append(S[:])
-        self.mergeSort(S, left, right)
+        self.step.append(arr[:])
+        self.mergeSort(arr, left, right)
         return self.step
-
-    def output():
-        pass
 
 # Quick Sort
 # Reference: https://www.geeksforgeeks.org/dsa/python-program-for-quicksort/
@@ -97,7 +142,6 @@ class QuickSort:
             pi = self.partition(S, left, right)
             self.quickSort(S, left, pi - 1)
             self.quickSort(S, pi + 1, right)
-        return S
 
 # Quick Sort Step
 # Reference: https://www.geeksforgeeks.org/dsa/python-program-for-quicksort/
@@ -128,7 +172,6 @@ class QuickSortStep:
             pi = self.partition(S, left, right)
             self.quickSort(S, left, pi - 1)
             self.quickSort(S, pi + 1, right)
-        return S
 
     def execute(self, S, left, right):
         self.step = []
